@@ -2,8 +2,7 @@
 // 3/11/2024
 
 //#include "driver/temperature_sensor.h"
-int lightOnePin = 0;
-int lightTwoPin = 0; 
+int lightPin = 0;
 int fanActivatePin = 0;
 int heatPlateActivatePin = 0;
 
@@ -15,8 +14,7 @@ void setup() {
 
   // set pins for output
   // writing to the pins will set the state of the peripheral devices
-  pinMode(lightOnePin,OUTPUT);
-  pinMode(lightTwoPin,OUTPUT);
+  pinMode(lightPin,OUTPUT);
   pinMode(fanActivatePin,OUTPUT);
   pinMode(heatPlateActivatePin,OUTPUT);
 
@@ -25,15 +23,29 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  int tempHighThresh = 100;
+  int tempLowThresh = 40;
+  int currentTemp = 0;
+  //  activate heat plates
+  if(currentTemp < tempLowThresh){
+    digitalWrite(heatPlateActivatePin, HIGH);
+    digitalWrite(fanActivatePin, HIGH);
+  }else if(currentTemp > tempHighThresh){
+    digitalWrite(heatPlateActivatePin, LOW);
+    digitalWrite(fanActivatePin, HIGH);
+  }else{
+    digitalWrite(heatPlateActivatePin, LOW);
+    digitalWrite(fanActivatePin, LOW);
+  }
 
 }
 
-void activateFan(){
-
+void activateFan(int pin){
+  digitalWrite(pin, HIGH);
 }
 
 void deactivateFan(){
-
+  digitalWrite(pin, HIGH);
 }
 
 void activateHeatPlates(){
