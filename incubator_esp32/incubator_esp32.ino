@@ -2,19 +2,22 @@
 // 3/11/2024
 
 #include <WiFi.h>
+//#include <Visualizer/Temperature_Reader.py>
 //#include "driver/temperature_sensor.h"
 
 int lightPin = 0;
 int fanActivatePin = 0;
 int heatPlateActivatePin = 0;
 
-const char* ssid = "";
-const char* password = "";
+const char* ssid = "Ray-net";
+const char* password = "Jumble2o2";
 
 String hostname = "Incubation Chamber #1";
+unsigned long programStartTime;
 
-void initWifi(){
-    // set the mode of the WiFi connector 
+
+void initWiFi(){
+  // set the mode of the WiFi connector 
   WiFi.mode(WIFI_STA);
   // The name of the device
   WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
@@ -24,13 +27,19 @@ void initWifi(){
   Serial.println("\nConnecting to WiFi...");
   // wait for WiFi conneciton.
   while (WiFi.status() != WL_CONNECTED) {
-    Serial.print('.');
+    Serial.println('Connecting...');
     delay(1000);
   }
+  Serial.println('Connected.');
+  Serial.print("Local IP address: ");
   Serial.println(WiFi.localIP());
+
 }
 
 void setup() {
+
+  // Log start time of the program
+  programStartTime = millis();
 
   // set up for USB communication
   Serial.begin(115200);
@@ -42,7 +51,8 @@ void setup() {
   pinMode(lightPin,OUTPUT);
   pinMode(fanActivatePin,OUTPUT);
   pinMode(heatPlateActivatePin,OUTPUT);
-
+  // The lights start on (beginning of the day)
+  digitalWrite(lightPin, HIGH);
 }
 
 
@@ -51,14 +61,33 @@ void loop() {
   int tempHighThresh = 100;
   int tempLowThresh = 40;
   int currentTemp = 0;
-  //  activate heat plates
+  int hourLimit = 8;
+  unsigned long currentTime = millis();
+  /*
+  Code Segment manages the lights on a start and end time basis. UTC-8 time zone 
+  */
+  // convert the elapsed time to hours
+  if( ( (int)( (double) (currentTime - programStartTime) / 3.6*pow(10,6)) >= hourLimit ) ){
+    // turn the lights off
+    digitalWrite(lightPin, LOW);
+  }
+
+  /*
+  Code Segment manages the temperature of the incubation chamber by thresholding a low and high temperature rating
+  */
+    //  activate heat plates
+    //  activate the fan
   if(currentTemp < tempLowThresh){
     digitalWrite(heatPlateActivatePin, HIGH);
     digitalWrite(fanActivatePin, HIGH);
   }else if(currentTemp > tempHighThresh){
+    //  deactivate heat plates
+    //  activate the fan
     digitalWrite(heatPlateActivatePin, LOW);
     digitalWrite(fanActivatePin, HIGH);
   }else{
+    //  deactivate heat plates
+    //  deactivate the fan
     digitalWrite(heatPlateActivatePin, LOW);
     digitalWrite(fanActivatePin, LOW);
   }
@@ -69,7 +98,7 @@ void activateFan(int pin){
   digitalWrite(pin, HIGH);
 }
 
-void deactivateFan(){
+void deactivateFan(int pin){
   digitalWrite(pin, HIGH);
 }
 
