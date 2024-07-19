@@ -11,6 +11,8 @@ int heatPlateActivatePin = 0;
 
 const char* ssid = "Ray-net";
 const char* password = "Jumble2o2";
+// the address of the machine running the python script
+const char* ServerIPaddress = "192.168.168.42";
 
 String hostname = "Incubation Chamber #1";
 unsigned long programStartTime;
@@ -58,6 +60,17 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+
+  WiFiClient client;
+  if(!client.connect(ServerIPaddress, 8090)){      
+    Serial.println("Connection to host failed");
+    delay(1000);
+    return;
+  }
+  Serial.println("client connected sending packet");    // <<< added
+  client.print("Hello from ESP32!");
+  client.stop();
+  delay(1000);
   int tempHighThresh = 100;
   int tempLowThresh = 40;
   int currentTemp = 0;
