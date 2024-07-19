@@ -2,8 +2,6 @@
 // 3/11/2024
 
 #include <WiFi.h>
-//#include <Visualizer/Temperature_Reader.py>
-//#include "driver/temperature_sensor.h"
 
 int lightPin = 0;
 int fanActivatePin = 0;
@@ -62,15 +60,18 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   WiFiClient client;
-  if(!client.connect(ServerIPaddress, 8090)){      
-    Serial.println("Connection to host failed");
+  //if(!client.connect(ServerIPaddress, 8090)){      
+  //  Serial.println("Connection to host failed");
+  //  delay(1000);
+  //  return;
+  //}
+  
+  if(client.connect(ServerIPaddress, 8090)){   
+    // Send temp and device data to the server for display   
+    client.print("Hello from ESP")
     delay(1000);
     return;
   }
-  Serial.println("client connected sending packet");    // <<< added
-  client.print("Hello from ESP32!");
-  client.stop();
-  delay(1000);
   int tempHighThresh = 100;
   int tempLowThresh = 40;
   int currentTemp = 0;
@@ -104,29 +105,5 @@ void loop() {
     digitalWrite(heatPlateActivatePin, LOW);
     digitalWrite(fanActivatePin, LOW);
   }
-
-}
-
-void activateFan(int pin){
-  digitalWrite(pin, HIGH);
-}
-
-void deactivateFan(int pin){
-  digitalWrite(pin, HIGH);
-}
-
-void activateHeatPlates(){
-
-}
-
-void deactivateHeatPlates(){
-
-}
-
-void activateLights(){
-
-}
-
-void deactivateLights(){
 
 }
