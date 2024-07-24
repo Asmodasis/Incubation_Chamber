@@ -4,6 +4,8 @@ import socket
 from tkinter import messagebox
 import sys
 
+#buttonClicked  = False # Before first click
+
 def main():
     #win = GraphWin("Incubation Chamber Visualizer", 500, 500)
     #win.setBackground(color_rgb(255,255,255))
@@ -34,8 +36,8 @@ def main():
     root.title("Incubation Chamber Visualizer") 
     
     # Change the label text 
-    def show(): 
-        label.config( text = clicked.get() ) 
+    #def show(): 
+    #    label.config( text = clicked.get() + " is Selected" ) 
     
     # Dropdown menu options 
     options = [ 
@@ -49,28 +51,40 @@ def main():
     ] 
     
     # datatype of menu text 
-    clicked = StringVar() 
+    clicked = StringVar(root) 
     
     # initial menu text 
-    clicked.set( "Incubation Chamber #1 192.168.168.182" ) 
-    
+    clicked.set( "Incubation Chamber #1 192.168.168.182") 
+
+
     # Create Dropdown menu 
-    drop = OptionMenu( root , clicked , *options ) 
+    drop = OptionMenu( root , clicked, *options,) 
     drop.pack() 
+
+   
+    
+    def ButtonPress():
+        label.config( text = clicked.get() + " is Selected" ) 
+        #global buttonClicked
+        #buttonClicked = not buttonClicked 
+
+        # button was pressed
+        print("Button Pressed!")
+
+    # before the first click
     
     # Create button, it will change label text 
-    button = Button( root , text = "Connect..." , command = show ).pack() 
-    
+    button = Button( root , text = "Connect..." , command = ButtonPress ).pack() 
+
     # Create Label 
-    label = Label( root , text = " This Label" ) 
+    label = Label( root , text = "No Chamber Selected" ) 
     label.pack() 
 
+    # Close the window when the system [x] button is pressed 
     root.protocol('WM_DELETE_WINDOW', lambda: sys.exit())
-    # Execute tkinter 
+    # Execute tkinter loop 
     root.mainloop() 
     
-    #button to close the window
-    #Button(root, text="Quit", command=root.destroy).pack() 
 
 
    
