@@ -4,29 +4,9 @@ import socket
 from tkinter import messagebox
 import sys
 
-#buttonClicked  = False # Before first click
 
 def main():
-    #win = GraphWin("Incubation Chamber Visualizer", 500, 500)
-    #win.setBackground(color_rgb(255,255,255))
-    '''
-    print("Creating server...")
-    s = socket.socket()
-    s.bind(('0.0.0.0', 8090))
-    s.listen(0)
-    
-    while True:
-            # TODO: Add this to tkinter
-            client, addr = s.accept()
-            while True:
-                    content = client.recv(32)
-                    if len(content) == 0:
-                            break
-                    else:
-                            print(content)
-            print("Closing connection")
-            client.close()
-    '''
+
     # Create object 
 
     root = Tk() 
@@ -35,10 +15,7 @@ def main():
     root.geometry( "500x500" )
     root.title("Incubation Chamber Visualizer") 
     
-    # Change the label text 
-    #def show(): 
-    #    label.config( text = clicked.get() + " is Selected" ) 
-    
+
     # Dropdown menu options 
     options = [ 
         "Incubation Chamber #1 192.168.168.182", 
@@ -64,12 +41,37 @@ def main():
    
     
     def ButtonPress():
-        label.config( text = clicked.get() + " is Selected" ) 
-        #global buttonClicked
-        #buttonClicked = not buttonClicked 
+        label.config( text = clicked.get() + " is selected (not connected)." ) 
 
         # button was pressed
         print("Button Pressed!")
+        print("Creating server...")
+        s = socket.socket()
+        s.bind(('0.0.0.0', 8090))
+        s.listen(0)
+       
+        while True:
+                
+                client, addr = s.accept()
+                if addr[0] in clicked.get():
+                    label.config( text = clicked.get() + " is connected." )
+                    #print("address is : ")
+                    #print(addr[0])
+                    #print(type(addr[0]))
+                    while True:
+                            content = client.recv(512)
+                            if len(content) == 0:
+                                break
+                            else:
+                                print(content)
+                    print("Closing connection")
+                    client.close()
+                    return;
+                else:
+                    print("Closing connection")
+                    client.close()
+                    return;
+            
 
     # before the first click
     

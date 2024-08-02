@@ -2,7 +2,7 @@
 // 3/11/2024
 
 #include <WiFi.h>
-
+#define convertTime(a,b) ( (int)( (double) (a - b) / 3.6*pow(10,6)) )
 int lightPin = 0;
 int fanActivatePin = 0;
 int heatPlateActivatePin = 0;
@@ -58,30 +58,35 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-
   WiFiClient client;
-  //if(!client.connect(ServerIPaddress, 8090)){      
-  //  Serial.println("Connection to host failed");
-  //  delay(1000);
-  //  return;
-  //}
-  
-  if(client.connect(ServerIPaddress, 8090)){   
-    // Send temp and device data to the server for display   
-    client.print("Hello from ESP")
-    delay(1000);
-    return;
-  }
   int tempHighThresh = 100;
   int tempLowThresh = 40;
   int currentTemp = 0;
   int hourLimit = 8;
   unsigned long currentTime = millis();
+  //unsigned long currentMillis = millis();
+  unsigned long seconds = (currentTime-programStartTime) / 1000;
+  unsigned long minutes = seconds / 60;
+  unsigned long hours = minutes / 60;
+  unsigned long days = hours / 24;
+  //currentMillis %= 1000;
+  seconds %= 60;
+  minutes %= 60;
+  hours %= 24;
+
+  if(client.connect(ServerIPaddress, 8090)){   
+    // Send temp and device data to the server for display   
+    //client.print("Hello from ESP");
+    client.print(String(tempHighThresh)+','+String(tempLowThresh)+','+String(currentTemp)+','+String(hourLimit)+','+String(hours));
+    delay(1000);
+    return;
+  }
+ 
   /*
   Code Segment manages the lights on a start and end time basis. UTC-8 time zone 
   */
   // convert the elapsed time to hours
-  if( ( (int)( (double) (currentTime - programStartTime) / 3.6*pow(10,6)) >= hourLimit ) ){
+  if( hours >= hourLimit ){
     // turn the lights off
     digitalWrite(lightPin, LOW);
   }
