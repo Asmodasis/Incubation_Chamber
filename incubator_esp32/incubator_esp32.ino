@@ -11,6 +11,8 @@ const char* ssid = "Ray-net";
 const char* password = "Jumble2o2";
 // the address of the machine running the python script
 const char* ServerIPaddress = "192.168.168.42";
+// the address of the chamber 
+IPAddress chamberIp(192, 168, 168, 182);
 
 String hostname = "Incubation Chamber #1";
 unsigned long programStartTime;
@@ -20,7 +22,7 @@ void initWiFi(){
   // set the mode of the WiFi connector 
   WiFi.mode(WIFI_STA);
   // The name of the device
-  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
+  WiFi.config(chamberIp, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   WiFi.setHostname(hostname.c_str());
   // connect the wifi on the ESP32
   WiFi.begin(ssid, password);
