@@ -13,7 +13,7 @@ def main():
     root = Tk()
 
     def clear(*widgets):
-        s.sendto("Hello from server",b"192.168.168.182")
+        #s.sendto("Hello from server",b"192.168.168.182")
         for widget in widgets:
             widget.destroy() #finally we are deleting the widgets.
         

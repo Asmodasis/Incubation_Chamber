@@ -7,8 +7,8 @@ int lightPin = 0;
 int fanActivatePin = 0;
 int heatPlateActivatePin = 0;
 
-const char* ssid = "Ray-net";
-const char* password = "Jumble2o2";
+const char* ssid = "bar";
+const char* password = "foo";
 // the address of the machine running the python script
 const char* ServerIPaddress = "192.168.168.42";
 // the address of the chamber 
@@ -17,7 +17,13 @@ IPAddress chamberIp(192, 168, 168, 182);
 String hostname = "Incubation Chamber #1";
 unsigned long programStartTime;
 
+// used for testing
+int testValue = 0;
+int tempHighThresh = 28;
+int tempLowThresh = 18;
 
+int currentTemp = 0;
+int hourLimit = 8;
 void initWiFi(){
   // set the mode of the WiFi connector 
   WiFi.mode(WIFI_STA);
@@ -61,10 +67,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   WiFiClient client;
-  int tempHighThresh = 100;
-  int tempLowThresh = 40;
-  int currentTemp = 0;
-  int hourLimit = 8;
+
   unsigned long currentTime = millis();
   //unsigned long currentMillis = millis();
   unsigned long seconds = (currentTime-programStartTime) / 1000;
@@ -79,8 +82,19 @@ void loop() {
   if(client.connect(ServerIPaddress, 8090)){   
     // Send temp and device data to the server for display   
     //client.print("Hello from ESP");
+    if(!testValue){
     client.print(String(tempHighThresh)+','+String(tempLowThresh)+','+String(currentTemp)+','+String(hourLimit)+','+String(hours));
+    tempHighThresh = 90; // REMOVE
+    tempLowThresh = 50; // REMOVE
+    currentTemp = 0; // REMOVE
+    hourLimit = 9; // REMOVE
+    testValue = testValue  + 1; // REMOVE
     delay(1000);
+    }else{
+      client.print(String(tempHighThresh)+','+String(tempLowThresh)+','+String(currentTemp)+','+String(hourLimit)+','+String(hours)); // REMOVE
+      testValue = 0; // REMOVE
+    }
+    
     return;
   }
  
